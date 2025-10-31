@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Futures Terminal</title>
+    <style>
+        /* General Reset & Typography */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            background: linear-gradient(145deg, #090c1f 0%, #171d3d 50%, #090c1f 100%); /* Deep, immersive space gradient */
+            color: #e6eaf0;
+            line-height: 1.6;
+            padding: clamp(15px, 4vw, 40px); /* Responsive padding */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden; /* Prevent horizontal scroll from body */
+        }
+
+        /* Container and Layout */
+        .container {
+            max-width: 1600px; /* Wider for desktop */
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            gap: clamp(20px, 5vw, 40px); /* Responsive gap */
+            grid-template-columns: 1fr; /* Single column on mobile by default */
+            position: relative;
+        }
+
+        /* Desktop Layout (Multi-panel grid) */
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto auto 1fr;
+            }
+            .instrument-section {
+                grid-column: 1 / 2;
+                grid-row: 1 / 2;
+            }
+            .risk-calculator {
+                grid-column: 2 / 3;
+                grid-row: 1 / 2;
+            }
+            .pnl-calculator {
+                grid-column: 3 / 4;
+                grid-row: 1 / 2;
+            }
+            .journal-section {
+                grid-column: 1 / 4;
+                grid-row: 2 / 3;
+            }
+            .disclaimer-section {
+                grid-column: 1 / 4;
+                grid-row: 3 / 4;
+            }
+        }
+
+        /* Cards/Panels - Futuristic Glassmorphism/Neumorphism Hybrid */
+        .card {
+            background: rgba(25, 35, 60, 0.4); /* Semi-transparent background */
+            backdrop-filter: blur(8px); /* Glassmorphism blur */
+            border: 1px solid rgba(70, 90, 140, 0.3); /* Subtle, glowing border */
+            border-radius: 20px; /* Smoother, larger radius */
+            padding: clamp(20px, 5vw, 35px); /* Responsive padding */
+            box-shadow: 
+                0 15px 40px rgba(0, 0, 0, 0.6), /* Deeper bottom shadow */
+                0 0 15px rgba(100, 150, 250, 0.15), /* Subtle blue outer glow */
+                inset 0 0 8px rgba(255, 255, 255, 0.05); /* Inner highlight */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.01); /* More pronounced lift and slight scale */
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.7), 
+                0 0 25px rgba(100, 150, 250, 0.3), /* Stronger outer glow */
+                inset 0 0 10px rgba(255, 255, 255, 0.1);
+            background: rgba(30, 45, 75, 0.5); /* Slightly darker on hover */
+        }
+
+        h2 {
+            font-size: clamp(1.6rem, 5vw, 2.2rem); /* Fluid heading size */
+            margin-bottom: clamp(20px, 4vw, 30px);
+            color: #78d1f0; /* Aqua-blue accent for headings */
+            text-shadow: 0 0 10px rgba(120, 209, 240, 0.5); /* Subtle glow for headings */
+            font-weight: 700;
+            letter-spacing: 0.03em; /* Slight letter spacing */
+            border-bottom: 2px solid rgba(70, 90, 140, 0.4);
+            padding-bottom: clamp(10px, 2vw, 15px);
+        }
+
+        h3 {
+            font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+            margin-top: clamp(25px, 5vw, 35px);
+            margin-bottom: clamp(10px, 2vw, 15px);
+            color: #a7d9f7;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-bottom: 1px solid rgba(70, 90, 140, 0.2);
+            padding-bottom: clamp(5px, 1.5vw, 8px);
+        }
+
+        /* Input Styles - Modern & Functional */
+        .input-group {
+            margin-bottom: clamp(15px, 3vw, 25px);
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: clamp(5px, 1.5vw, 10px);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #b3c5e6;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+        }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: clamp(10px, 3vw, 14px) clamp(12px, 3.5vw, 18px); /* Responsive padding */
+            border-radius: 12px;
+            border: 1px solid #4a628a;
+            background: #0f172a; /* Dark background for inputs */
+            color: #e6eaf0;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4); /* Inset shadow for depth */
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            border-color: #60a5fa;
+            outline: none;
+            box-shadow: 
+                0 0 0 4px rgba(96, 165, 250, 0.3), /* Outer focus glow */
+                inset 0 2px 8px rgba(0, 0, 0, 0.6); /* Deeper inset shadow */
+            background-color: #121c2c;
+        }
+
+        /* Output Display - Clean & Highlighted */
+        .output-panel {
+            margin-top: clamp(20px, 4vw, 30px);
+            padding: clamp(18px, 4vw, 25px);
+            border-radius: 15px;
+            background: rgba(15, 23, 42, 0.7); /* Slightly darker background than card */
+            border: 1px solid rgba(70, 90, 140, 0.2);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .output-panel p {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: clamp(8px, 2vw, 12px);
+            font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+            color: #c7d2e0;
+        }
+
+        .output-panel p:last-child {
+            margin-bottom: 0;
+        }
+
+        .output-panel p strong {
+            color: #61e88e; /* Vibrant green for positive outcomes */
+            font-weight: 600;
+            text-align: right;
+            text-shadow: 0 0 5px rgba(97, 232, 142, 0.2);
+        }
+
+        .output-panel p.highlight strong {
+            color: #fce38a; /* Bright gold for key results */
+            font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(252, 227, 138, 0.4);
+        }
+
+        /* Button Styles - Dynamic & Interactive */
+        .button-group {
+            display: flex;
+            gap: clamp(10px, 2.5vw, 15px);
+            margin-top: clamp(20px, 4vw, 30px);
+            flex-wrap: wrap; /* Ensure buttons wrap on mobile */
+            justify-content: flex-start;
+        }
+
+        .btn {
+            padding: clamp(10px, 3vw, 14px) clamp(15px, 4vw, 22px);
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: clamp(0.9rem, 2.8vw, 1rem);
+            transition: all 0.25s ease;
+            flex-grow: 1;
+            min-width: clamp(100px, 25vw, 150px); /* Maintain reasonable button width */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            color: #ffffff;
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4), 0 0 10px rgba(59, 130, 246, 0.3) inset;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6), 0 0 15px rgba(59, 130, 246, 0.4) inset;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(90deg, #475569, #334155);
+            color: #e6eaf0;
+            border: 1px solid #5a6d85;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 5px rgba(100, 116, 139, 0.1) inset;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(90deg, #334155, #475569);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 8px rgba(100, 116, 139, 0.2) inset;
+        }
+
+        /* Trade Journal Table - Highly Responsive & Stylish */
+        .journal-container {
+            overflow-x: auto; /* Ensures horizontal scrolling for the table if needed */
+            margin-top: clamp(20px, 4vw, 30px);
+            border-radius: 15px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.4);
+            background: rgba(15, 23, 42, 0.6); /* Slightly transparent for the table background */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+
+        .journal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(0.75rem, 2.2vw, 0.9rem); /* Fluid font size for table */
+            min-width: 800px; /* Minimum width to prevent excessive scrunching */
+        }
+
+        @media (max-width: 768px) {
+            .journal-table {
+                min-width: 600px; /* Adjust min-width for tablet */
+            }
+        }
+        @media (max-width: 480px) {
+            .journal-table {
+                min-width: 500px; /* Further adjust min-width for iPhone-like screens */
+            }
+        }
+
+
+        .journal-table th, .journal-table td {
+            padding: clamp(10px, 2.5vw, 16px) clamp(12px, 3vw, 20px);
+            text-align: left;
+            border-bottom: 1px solid rgba(70, 90, 140, 0.25);
+            white-space: nowrap; /* Keep content on one line to ensure table scroll */
+        }
+
+        .journal-table th {
+            background-color: #202e42;
+            color: #93c5fd;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: linear-gradient(180deg, #202e42, #18253a); /* Header gradient */
+        }
+
+        .journal-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .journal-table tbody tr:hover {
+            background-color: rgba(35, 45, 70, 0.7); /* More transparent on hover */
+        }
+
+        .summary-row td {
+            background: linear-gradient(90deg, #283a54, #1a273b);
+            font-weight: bold;
+            color: #a7f3d0;
+            border-top: 2px solid #60a5fa;
+            padding: clamp(15px, 3.5vw, 22px) clamp(18px, 4vw, 25px);
+            font-size: clamp(0.95rem, 2.8vw, 1.1rem);
+            text-shadow: 0 0 8px rgba(167, 243, 208, 0.3);
+        }
+
+        /* Disclaimers - Elegant & Subdued */
+        .disclaimer-section {
+            margin-top: clamp(40px, 8vw, 70px);
+            padding-top: clamp(25px, 5vw, 40px);
+            border-top: 1px solid rgba(70, 90, 140, 0.3);
+            font-size: clamp(0.7rem, 2vw, 0.8rem);
+            color: #8b9eb8;
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+            line-height: 1.6;
+        }
+
+        .disclaimer-section p {
+            margin-bottom: clamp(15px, 3vw, 25px);
+        }
+
+        .disclaimer-section hr {
+            border: 0;
+            height: 1px;
+            background-color: rgba(70, 90, 140, 0.2);
+            margin: clamp(15px, 3vw, 25px) auto;
+            width: 70%;
+        }
+
+        /* Mobile Specific Adjustments for buttons and layout */
+        @media (max-width: 480px) {
+            .button-group {
+                flex-direction: column; /* Stack buttons vertically on very small screens */
+            }
+            .btn {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Instrument Selector and Specs --><section class="card instrument-section">
+            <h2>Instrument & Margin</h2>
+            <div class="input-group">
+                <label for="instrument-select">Select Instrument</label>
+                <select id="instrument-select"></select>
+            </div>
+
+            <div class="output-panel">
+                <p>Exchange: <strong id="spec-exchange">N/A</strong></p>
+                <p>Tick Size: <strong id="spec-tick-size">N/A</strong></p>
+                <p>Tick Value: <strong id="spec-tick-value">N/A</strong></p>
+                <p>Point Value: <strong id="spec-point-value">N/A</strong></p>
+                <p class="highlight">Margin/Contract: <strong id="spec-margin">N/A</strong></p>
+                <p>Leverage: <strong id="output-leverage">0x</strong></p>
+            </div>
+
+            <h3>Custom Instrument</h3>
+            <div id="custom-instrument-form">
+                <div class="input-group"><input type="text" id="custom-name" placeholder="Name (e.g., CUS)"></div>
+                <div class="input-group"><input type="number" id="custom-tick-size" placeholder="Tick Size (e.g., 0.25)" step="any"></div>
+                <div class="input-group"><input type="number" id="custom-tick-value" placeholder="Tick Value (e.g., 12.50)" step="any"></div>
+                <div class="input-group"><input type="number" id="custom-multiplier" placeholder="Point Value (Multiplier)" step="any"></div>
+                <div class="input-group"><input type="number" id="custom-margin" placeholder="Margin (e.g., 12000)" step="any"></div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="addCustomInstrument()">Add Custom</button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Position Size & Risk Calculator --><section class="card risk-calculator">
+            <h2>Position Size & Risk</h2>
+            <div class="input-group">
+                <label for="account-balance">Account Balance ($)</label>
+                <input type="number" id="account-balance" value="25000" min="0" step="100" oninput="updateCalculators()">
+            </div>
+            <div class="input-group">
+                <label for="risk-percent">Risk Percentage (%)</label>
+                <input type="number" id="risk-percent" value="1.0" min="0.01" max="100" step="0.1" oninput="updateCalculators()">
+            </div>
+            <div class="input-group">
+                <label for="stop-ticks">Stop Loss (Ticks)</label>
+                <input type="number" id="stop-ticks" value="16" min="1" step="1" oninput="updateCalculators()">
+            </div>
+
+            <div class="output-panel">
+                <p>Dollar Risk/Trade: <strong id="output-dollar-risk">$0.00</strong></p>
+                <p>Stop Loss (Points): <strong id="output-point-risk">0.00</strong></p>
+                <p>Stop Loss (Ticks): <strong id="output-tick-risk">0</strong></p>
+                <p class="highlight">Max Contracts: <strong id="output-max-contracts">0</strong></p>
+            </div>
+        </section>
+
+        <!-- P&L and Simulation Calculator --><section class="card pnl-calculator">
+            <h2>P&L & Simulation</h2>
+            <div class="input-group">
+                <label for="entry-price">Entry Price</label>
+                <input type="number" id="entry-price" value="4500.00" step="any" oninput="updateCalculators()">
+            </div>
+            <div class="input-group">
+                <label for="exit-price">Exit Price</label>
+                <input type="number" id="exit-price" value="4510.00" step="any" oninput="updateCalculators()">
+            </div>
+            <div class="input-group">
+                <label for="num-contracts">Number of Contracts</label>
+                <input type="number" id="num-contracts" value="1" min="1" step="1" oninput="updateCalculators()">
+            </div>
+            <div class="input-group">
+                <label for="commission">Commission (per contract, round trip)</label>
+                <input type="number" id="commission" value="4.00" min="0" step="0.01" oninput="updateCalculators()">
+            </div>
+
+            <h3>Trade Outcomes</h3>
+            <div class="input-group">
+                <label for="target-price">Target Price (Optional)</label>
+                <input type="number" id="target-price" value="4520.00" step="any" oninput="updateCalculators()">
+            </div>
+            <div class="input-group">
+                <label for="stop-price">Stop Price (Optional)</label>
+                <input type="number" id="stop-price" value="4495.00" step="any" oninput="updateCalculators()">
+            </div>
+
+
+            <div class="output-panel">
+                <p>Gross P&L ($): <strong id="output-gross-pnl">$0.00</strong></p>
+                <p>Net P&L ($): <strong id="output-net-pnl">$0.00</strong></p>
+                <p>P&L (Points): <strong id="output-pnl-points">0.00</strong></p>
+                <p>P&L (Ticks): <strong id="output-pnl-ticks">0</strong></p>
+                <hr style="border: 0; height: 1px; background-color: rgba(70, 90, 140, 0.4); margin: clamp(15px, 3vw, 20px) 0;">
+                <p class="highlight">Risk-to-Reward (R:R): <strong id="output-rr">0.00:1</strong></p>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="addTradeToJournal()">Add Trade to Journal</button>
+            </div>
+        </section>
+
+        <!-- Trade Journal --><section class="card journal-section">
+            <h2>Trade Journal (Session Data)</h2>
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="exportJournal('csv')">Export CSV</button>
+                <button class="btn btn-secondary" onclick="exportJournal('txt')">Export TXT</button>
+                <button class="btn btn-secondary" onclick="exportJournal('json')">Export JSON</button>
+                <button class="btn btn-secondary" onclick="exportJournal('pdf')">Export PDF (Simple)</button>
+                <button class="btn btn-secondary" onclick="clearJournal()">Clear Journal</button>
+                <button class="btn btn-secondary" onclick="resetAll()">Reset All</button>
+            </div>
+
+            <div class="journal-container">
+                <table class="journal-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Instrument</th>
+                            <th>Qty</th>
+                            <th>Entry</th>
+                            <th>Exit</th>
+                            <th>Stop</th>
+                            <th>Target</th>
+                            <th>R:R</th>
+                            <th>Net P&L ($)</th>
+                            <th>Comms ($)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="journal-body">
+                        <!-- Trades will be inserted here --></tbody>
+                    <tfoot>
+                        <tr class="summary-row">
+                            <td colspan="7">TOTALS/AVERAGE</td>
+                            <td id="summary-avg-rr">Avg R:R: 0.00</td>
+                            <td id="summary-total-pnl">Total P&L: $0.00</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <!-- Disclaimers --><section class="disclaimer-section">
+            <p>HYPOTHETICAL OR SIMULATED PERFORMANCE RESULTS HAVE CERTAIN INHERENT LIMITATIONS. UNLIKE AN ACTUAL PERFORMANCE RECORD, SIMULATED RESULTS DO NOT REPRESENT ACTUAL TRADING. ALSO, SINCE THE TRADES HAVE NOT BEEN EXECUTED, THE RESULTS MAY HAVE UNDER-OR-OVER COMPENSATED FOR THE IMPACT, IF ANY, OF CERTAIN MARKET FACTORS, SUCH AS LACK OF LIQUIDITY. SIMULATED TRADING PROGRAMS IN GENERAL ARE ALSO SUBJECT TO THE FACT THAT THEY ARE DESIGNED WITH THE BENEFIT OF HINDSIGHT. NO REPRESENTATION IS BEING MADE THAT ANY ACCOUNT WILL OR IS LIKELY TO ACHIEVE PROFIT OR LOSSES SIMILAR TO THOSE SHOWN.</p>
+            <hr>
+            <p>All calculations and trade data exist only in your browser’s memory. Nothing is saved or transmitted. Refreshing or closing the page will permanently clear all data. This website does not provide financial, investment, or trading advice. Use of any information or tools on this site is entirely at your own risk.</p>
+        </section>
+
+    </div>
+
+    <script>
+        const BUILT_IN_INSTRUMENTS = {
+            'ES': { tickSize: 0.25, tickValue: 12.50, contractMultiplier: 50, margin: 12000, exchange: 'CME' },
+            'MES': { tickSize: 0.25, tickValue: 1.25, contractMultiplier: 5, margin: 1200, exchange: 'CME' },
+            'NQ': { tickSize: 0.25, tickValue: 5.00, contractMultiplier: 20, margin: 15000, exchange: 'CME' },
+            'MNQ': { tickSize: 0.25, tickValue: 0.50, contractMultiplier: 2, margin: 1500, exchange: 'CME' },
+            'YM': { tickSize: 1.00, tickValue: 5.00, contractMultiplier: 5, margin: 5000, exchange: 'CBOT' },
+            'MYM': { tickSize: 1.00, tickValue: 0.50, contractMultiplier: 0.5, margin: 500, exchange: 'CBOT' },
+            'RTY': { tickSize: 0.10, tickValue: 5.00, contractMultiplier: 10, margin: 7500, exchange: 'CME' },
+            'M2K': { tickSize: 0.10, tickValue: 0.50, contractMultiplier: 1, margin: 750, exchange: 'CME' },
+            'GC': { tickSize: 0.10, tickValue: 10.00, contractMultiplier: 100, margin: 8000, exchange: 'COMEX' },
+            'MGC': { tickSize: 0.10, tickValue: 1.00, contractMultiplier: 10, margin: 800, exchange: 'COMEX' },
+            'SI': { tickSize: 0.005, tickValue: 25.00, contractMultiplier: 5000, margin: 10000, exchange: 'COMEX' },
+            'SIL': { tickSize: 0.005, tickValue: 5.00, contractMultiplier: 1000, margin: 2000, exchange: 'COMEX' },
+            'CL': { tickSize: 0.01, tickValue: 10.00, contractMultiplier: 1000, margin: 11000, exchange: 'NYMEX' },
+            'MCL': { tickSize: 0.01, tickValue: 1.00, contractMultiplier: 100, margin: 1100, exchange: 'NYMEX' },
+            'NG': { tickSize: 0.001, tickValue: 10.00, contractMultiplier: 10000, margin: 4000, exchange: 'NYMEX' },
+            'ZB': { tickSize: 0.01, tickValue: 31.25, contractMultiplier: 1000, margin: 2500, exchange: 'CBOT' },
+            '6E': { tickSize: 0.00005, tickValue: 6.25, contractMultiplier: 125000, margin: 1500, exchange: 'CME' }
+        };
+
+        let currentInstruments = {...BUILT_IN_INSTRUMENTS};
+        let tradeJournal = [];
+
+        function initInstrumentSelector() {
+            const select = document.getElementById('instrument-select');
+            select.innerHTML = '';
+            const allSymbols = Object.keys(currentInstruments).sort();
+
+            allSymbols.forEach(symbol => {
+                const option = document.createElement('option');
+                option.value = symbol;
+                option.textContent = symbol;
+                select.appendChild(option);
+            });
+
+            select.onchange = updateCalculators;
+            select.value = 'ES'; // Set default selection
+            updateCalculators();
+        }
+
+        function getInstrument() {
+            const selectedSymbol = document.getElementById('instrument-select').value;
+            return currentInstruments[selectedSymbol];
+        }
+
+        function updateInstrumentSpecs(inst) {
+            if (!inst) {
+                document.getElementById('spec-exchange').textContent = 'N/A';
+                document.getElementById('spec-tick-size').textContent = 'N/A';
+                document.getElementById('spec-tick-value').textContent = 'N/A';
+                document.getElementById('spec-point-value').textContent = 'N/A';
+                document.getElementById('spec-margin').textContent = 'N/A';
+                return;
+            }
+
+            document.getElementById('spec-exchange').textContent = inst.exchange || 'N/A';
+            document.getElementById('spec-tick-size').textContent = inst.tickSize.toFixed(Math.max(2, inst.tickSize.toString().split('.')[1]?.length || 0));
+            document.getElementById('spec-tick-value').textContent = `$${inst.tickValue.toFixed(2)}`;
+            document.getElementById('spec-point-value').textContent = `$${inst.contractMultiplier.toFixed(2)}`;
+            document.getElementById('spec-margin').textContent = `$${inst.margin.toLocaleString()}`;
+        }
+
+        function addCustomInstrument() {
+            const name = document.getElementById('custom-name').value.toUpperCase().trim();
+            const tickSize = parseFloat(document.getElementById('custom-tick-size').value);
+            const tickValue = parseFloat(document.getElementById('custom-tick-value').value);
+            const multiplier = parseFloat(document.getElementById('custom-multiplier').value);
+            const margin = parseFloat(document.getElementById('custom-margin').value);
+
+            if (!name || isNaN(tickSize) || isNaN(tickValue) || isNaN(multiplier) || isNaN(margin) || tickSize <= 0 || tickValue <= 0 || multiplier <= 0 || margin <= 0) {
+                alert('Please enter valid, positive values for all custom instrument fields.');
+                return;
+            }
+
+            currentInstruments[name] = {
+                tickSize: tickSize,
+                tickValue: tickValue,
+                contractMultiplier: multiplier,
+                margin: margin,
+                exchange: 'CUSTOM'
+            };
+
+            initInstrumentSelector();
+            document.getElementById('instrument-select').value = name;
+            updateCalculators();
+
+            // Clear custom form
+            document.getElementById('custom-name').value = '';
+            document.getElementById('custom-tick-size').value = '';
+            document.getElementById('custom-tick-value').value = '';
+            document.getElementById('custom-multiplier').value = '';
+            document.getElementById('custom-margin').value = '';
+        }
+
+        function calculatePositionAndRisk(inst) {
+            const balance = parseFloat(document.getElementById('account-balance').value);
+            const riskPercent = parseFloat(document.getElementById('risk-percent').value);
+            const stopTicks = parseFloat(document.getElementById('stop-ticks').value);
+
+            if (!inst || isNaN(balance) || isNaN(riskPercent) || isNaN(stopTicks) || balance <= 0 || riskPercent <= 0 || stopTicks <= 0) {
+                document.getElementById('output-dollar-risk').textContent = '$0.00';
+                document.getElementById('output-point-risk').textContent = '0.00';
+                document.getElementById('output-tick-risk').textContent = '0';
+                document.getElementById('output-max-contracts').textContent = '0';
+                return { dollarRisk: 0, maxContracts: 0, pointRisk: 0 };
+            }
+
+            const dollarRiskPerContract = stopTicks * inst.tickValue;
+            const maxDollarRisk = balance * (riskPercent / 100);
+            const maxContracts = dollarRiskPerContract > 0 ? Math.floor(maxDollarRisk / dollarRiskPerContract) : 0;
+            const actualDollarRisk = maxContracts * dollarRiskPerContract;
+            const pointRisk = stopTicks * inst.tickSize;
+
+            document.getElementById('output-dollar-risk').textContent = `$${maxDollarRisk.toFixed(2)}`;
+            document.getElementById('output-point-risk').textContent = pointRisk.toFixed(4);
+            document.getElementById('output-tick-risk').textContent = stopTicks.toFixed(0);
+            document.getElementById('output-max-contracts').textContent = maxContracts.toFixed(0);
+
+            return { dollarRisk: maxDollarRisk, maxContracts: maxContracts, pointRisk: pointRisk };
+        }
+
+        function calculatePnLAndRR(inst) {
+            const entryPrice = parseFloat(document.getElementById('entry-price').value);
+            const exitPrice = parseFloat(document.getElementById('exit-price').value);
+            const contracts = parseInt(document.getElementById('num-contracts').value);
+            const commission = parseFloat(document.getElementById('commission').value);
+            const stopPrice = parseFloat(document.getElementById('stop-price').value);
+            const targetPrice = parseFloat(document.getElementById('target-price').value);
+
+            let grossPnL = 0;
+            let pnlTicks = 0;
+            let pnlPoints = 0;
+            let netPnL = 0;
+
+            if (inst && !isNaN(entryPrice) && !isNaN(exitPrice) && contracts > 0 && !isNaN(commission) && commission >= 0) {
+                pnlPoints = exitPrice - entryPrice;
+                pnlTicks = Math.round(pnlPoints / inst.tickSize);
+                grossPnL = pnlTicks * inst.tickValue * contracts;
+                netPnL = grossPnL - (commission * contracts);
+            }
+
+            document.getElementById('output-gross-pnl').textContent = `$${grossPnL.toFixed(2)}`;
+            document.getElementById('output-net-pnl').textContent = `$${netPnL.toFixed(2)}`;
+            document.getElementById('output-pnl-points').textContent = pnlPoints.toFixed(4);
+            document.getElementById('output-pnl-ticks').textContent = pnlTicks.toFixed(0);
+
+            let rr = 0;
+            let targetGain = 0;
+            let stopLoss = 0;
+
+            if (inst && !isNaN(targetPrice) && !isNaN(stopPrice) && !isNaN(entryPrice) && contracts > 0) {
+                // Determine if Long or Short
+                if (targetPrice > entryPrice && stopPrice < entryPrice) { // Assumed Long Trade
+                    targetGain = (targetPrice - entryPrice) * inst.contractMultiplier;
+                    stopLoss = (entryPrice - stopPrice) * inst.contractMultiplier;
+                } else if (targetPrice < entryPrice && stopPrice > entryPrice) { // Assumed Short Trade
+                    targetGain = (entryPrice - targetPrice) * inst.contractMultiplier;
+                    stopLoss = (stopPrice - entryPrice) * inst.contractMultiplier;
+                } else {
+                    targetGain = 0;
+                    stopLoss = 0;
+                }
+
+                if (stopLoss > 0) {
+                    rr = targetGain / stopLoss;
+                }
+            }
+
+            document.getElementById('output-rr').textContent = `${rr.toFixed(2)}:1`;
+
+            return { netPnL, rr };
+        }
+
+        function updateLeverage(inst) {
+            const entryPrice = parseFloat(document.getElementById('entry-price').value);
+            const contracts = parseInt(document.getElementById('num-contracts').value);
+            const balance = parseFloat(document.getElementById('account-balance').value);
+
+            let leverage = 0;
+
+            if (inst && !isNaN(entryPrice) && contracts > 0 && balance > 0) {
+                // Position Value (approximate) = Price * Point Value (Multiplier) * Contracts
+                const positionValue = entryPrice * inst.contractMultiplier * contracts;
+                leverage = positionValue / balance;
+            }
+
+            document.getElementById('output-leverage').textContent = `${leverage.toFixed(2)}x`;
+        }
+
+
+        function updateCalculators() {
+            const inst = getInstrument();
+            updateInstrumentSpecs(inst);
+            calculatePositionAndRisk(inst);
+            calculatePnLAndRR(inst);
+            updateLeverage(inst);
+        }
+
+        // --- Trade Journal Functions ---
+
+        function addTradeToJournal() {
+            const inst = getInstrument();
+            if (!inst) return;
+
+            const entry = parseFloat(document.getElementById('entry-price').value);
+            const exit = parseFloat(document.getElementById('exit-price').value);
+            const qty = parseInt(document.getElementById('num-contracts').value);
+            const commission = parseFloat(document.getElementById('commission').value);
+            const stop = document.getElementById('stop-price').value;
+            const target = document.getElementById('target-price').value;
+
+            if (isNaN(entry) || isNaN(exit) || qty <= 0 || isNaN(commission)) {
+                alert('Please ensure Entry, Exit, Quantity, and Commission are valid for the trade.');
+                return;
+            }
+
+            const { netPnL, rr } = calculatePnLAndRR(inst);
+            const timestamp = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+
+            const trade = {
+                timestamp,
+                instrument: document.getElementById('instrument-select').value,
+                entry: entry.toFixed(4),
+                exit: exit.toFixed(4),
+                qty,
+                stop: stop ? parseFloat(stop).toFixed(4) : '',
+                target: target ? parseFloat(target).toFixed(4) : '',
+                rr: rr.toFixed(2),
+                netPnL: netPnL,
+                commissions: (commission * qty).toFixed(2)
+            };
+
+            tradeJournal.unshift(trade);
+            renderJournal();
+        }
+
+        function renderJournal() {
+            const body = document.getElementById('journal-body');
+            body.innerHTML = '';
+            let totalPnL = 0;
+            let totalRR = 0;
+
+            if (tradeJournal.length === 0) {
+                body.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #64748b; padding: 20px;">No trades recorded in this session.</td></tr>';
+                document.getElementById('summary-total-pnl').textContent = 'Total P&L: $0.00';
+                document.getElementById('summary-avg-rr').textContent = 'Avg R:R: 0.00';
+                return;
+            }
+
+            tradeJournal.forEach(trade => {
+                const row = body.insertRow();
+                row.insertCell().textContent = trade.timestamp;
+                row.insertCell().textContent = trade.instrument;
+                row.insertCell().textContent = trade.qty;
+                row.insertCell().textContent = trade.entry;
+                row.insertCell().textContent = trade.exit;
+                row.insertCell().textContent = trade.stop;
+                row.insertCell().textContent = trade.target;
+                row.insertCell().textContent = trade.rr;
+                row.insertCell().textContent = `$${trade.netPnL.toFixed(2)}`;
+                row.insertCell().textContent = `$${trade.commissions}`;
+
+                totalPnL += trade.netPnL;
+                totalRR += parseFloat(trade.rr);
+            });
+
+            const avgRR = totalRR / tradeJournal.length;
+            document.getElementById('summary-total-pnl').textContent = `Total P&L: $${totalPnL.toFixed(2)}`;
+            document.getElementById('summary-avg-rr').textContent = `Avg R:R: ${avgRR.toFixed(2)}`;
+        }
+
+        function clearJournal() {
+            if (confirm('Are you sure you want to clear the entire trade journal? This cannot be undone.')) {
+                tradeJournal = [];
+                renderJournal();
+            }
+        }
+
+        function resetAll() {
+             if (confirm('Are you sure you want to reset all inputs and clear the journal?')) {
+                // Clear Journal
+                tradeJournal = [];
+                renderJournal();
+
+                // Reset Inputs (simple brute force for a one-file app)
+                document.getElementById('account-balance').value = '25000';
+                document.getElementById('risk-percent').value = '1.0';
+                document.getElementById('stop-ticks').value = '16';
+                document.getElementById('entry-price').value = '4500.00';
+                document.getElementById('exit-price').value = '4510.00';
+                document.getElementById('num-contracts').value = '1';
+                document.getElementById('commission').value = '4.00';
+                document.getElementById('target-price').value = '4520.00';
+                document.getElementById('stop-price').value = '4495.00';
+
+                // Reset custom instruments
+                currentInstruments = {...BUILT_IN_INSTRUMENTS};
+                initInstrumentSelector();
+
+                updateCalculators();
+            }
+        }
+
+        // --- Export Functions ---
+
+        function exportJournal(format) {
+            if (tradeJournal.length === 0) {
+                alert('Journal is empty. Add a trade first.');
+                return;
+            }
+
+            const header = ['Timestamp', 'Instrument', 'Qty', 'Entry', 'Exit', 'Stop', 'Target', 'R:R', 'Net P&L ($)', 'Commissions ($)'];
+            const data = tradeJournal.map(trade => [
+                trade.timestamp, trade.instrument, trade.qty, trade.entry, trade.exit, trade.stop, trade.target, trade.rr, trade.netPnL.toFixed(2), trade.commissions
+            ]);
+
+            const summary = [
+                'TOTAL P&L', document.getElementById('summary-total-pnl').textContent.replace('Total P&L: ', ''),
+                'AVG R:R', document.getElementById('summary-avg-rr').textContent.replace('Avg R:R: ', '')
+            ];
+
+            let content, mimeType, filename;
+
+            switch (format) {
+                case 'csv':
+                    content = [
+                        header.join(','),
+                        ...data.map(row => row.join(','))
+                    ].join('\n') + '\n\nSummary:\n' + summary.join(', ');
+                    mimeType = 'text/csv';
+                    filename = 'quantum_journal.csv';
+                    break;
+                case 'txt':
+                    content = 'Quantum Futures Terminal - Trade Journal\n\n' +
+                              header.join('\t') + '\n' +
+                              data.map(row => row.join('\t')).join('\n') +
+                              '\n\nSummary:\n' + summary.join(' | ');
+                    mimeType = 'text/plain';
+                    filename = 'quantum_journal.txt';
+                    break;
+                case 'json':
+                    content = JSON.stringify({ trades: tradeJournal, summary: { totalPnL: tradeJournal.reduce((sum, t) => sum + t.netPnL, 0), averageRR: totalRR / tradeJournal.length } }, null, 2);
+                    mimeType = 'application/json';
+                    filename = 'quantum_journal.json';
+                    break;
+                case 'pdf':
+                    // Simple PDF generation using a Data URI, simulating a basic document.
+                    // True PDF generation is complex and requires libraries, which are forbidden.
+                    content = 'data:text/html;charset=utf-8,' + encodeURIComponent(`
+                        <html><head><title>Quantum Futures Journal PDF</title><style>
+                        body{font-family:sans-serif;margin:40px;color:#333;} h1{color:#111;} table{width:100%;border-collapse:collapse;margin-top:20px;}
+                        th,td{border:1px solid #ccc;padding:10px;text-align:left;} th{background-color:#eee;font-weight:bold;}
+                        .summary{margin-top:30px;font-weight:bold;color:#111;}
+                        </style></head><body>
+                        <h1>Quantum Futures Terminal - Trade Journal</h1>
+                        <table>
+                            <thead><tr>${header.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+                            <tbody>${data.map(row => `<tr>${row.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+                        </table>
+                        <div class="summary">
+                            <p>${document.getElementById('summary-total-pnl').textContent}</p>
+                            <p>${document.getElementById('summary-avg-rr').textContent}</p>
+                        </div>
+                        <p style="margin-top: 50px; font-size: 10px; color:#666;">Disclaimer: This is a simulated performance record only.</p>
+                        </body></html>
+                    `);
+                    mimeType = 'application/pdf'; // This will prompt the browser to print/save as PDF
+                    filename = 'quantum_journal.pdf';
+                    
+                    const printWindow = window.open('about:blank', '_blank');
+                    printWindow.document.write(decodeURIComponent(content).replace('application/pdf', 'text/html'));
+                    printWindow.document.close();
+                    printWindow.print();
+                    return; // Return early for PDF handled by print
+
+            }
+
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // --- Initialization ---
+
+        window.onload = function() {
+            initInstrumentSelector();
+            updateCalculators();
+            renderJournal();
+
+            // Setup input listeners for auto-update (in addition to inline)
+            document.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
+                input.addEventListener('input', updateCalculators);
+            });
+        };
+    </script>
+</body>
+</html>
