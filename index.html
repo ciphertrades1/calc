@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Futures Terminal</title>
+    <title>Offline Futures Trading Calculator</title>
     <style>
         /* General Reset & Typography */
         *, *::before, *::after {
@@ -14,32 +14,26 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-            background: linear-gradient(145deg, #090c1f 0%, #171d3d 50%, #090c1f 100%); /* Deep, immersive space gradient */
-            color: #e6eaf0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); /* Dark gradient background */
+            color: #e2e8f0;
             line-height: 1.6;
-            padding: clamp(15px, 4vw, 40px); /* Responsive padding */
+            padding: 20px;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden; /* Prevent horizontal scroll from body */
         }
 
         /* Container and Layout */
         .container {
-            max-width: 1600px; /* Wider for desktop */
-            width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
             display: grid;
-            gap: clamp(20px, 5vw, 40px); /* Responsive gap */
-            grid-template-columns: 1fr; /* Single column on mobile by default */
-            position: relative;
+            gap: 20px;
+            grid-template-columns: 1fr;
         }
 
         /* Desktop Layout (Multi-panel grid) */
         @media (min-width: 1024px) {
             .container {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: 1fr 1fr 1fr;
                 grid-template-rows: auto auto 1fr;
             }
             .instrument-section {
@@ -64,271 +58,181 @@
             }
         }
 
-        /* Cards/Panels - Futuristic Glassmorphism/Neumorphism Hybrid */
+        /* Cards/Panels */
         .card {
-            background: rgba(25, 35, 60, 0.4); /* Semi-transparent background */
-            backdrop-filter: blur(8px); /* Glassmorphism blur */
-            border: 1px solid rgba(70, 90, 140, 0.3); /* Subtle, glowing border */
-            border-radius: 20px; /* Smoother, larger radius */
-            padding: clamp(20px, 5vw, 35px); /* Responsive padding */
-            box-shadow: 
-                0 15px 40px rgba(0, 0, 0, 0.6), /* Deeper bottom shadow */
-                0 0 15px rgba(100, 150, 250, 0.15), /* Subtle blue outer glow */
-                inset 0 0 8px rgba(255, 255, 255, 0.05); /* Inner highlight */
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s ease-in-out;
+            background-color: #1f2937;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid #334155;
+            transition: transform 0.2s;
         }
 
         .card:hover {
-            transform: translateY(-8px) scale(1.01); /* More pronounced lift and slight scale */
-            box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.7), 
-                0 0 25px rgba(100, 150, 250, 0.3), /* Stronger outer glow */
-                inset 0 0 10px rgba(255, 255, 255, 0.1);
-            background: rgba(30, 45, 75, 0.5); /* Slightly darker on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
         }
 
         h2 {
-            font-size: clamp(1.6rem, 5vw, 2.2rem); /* Fluid heading size */
-            margin-bottom: clamp(20px, 4vw, 30px);
-            color: #78d1f0; /* Aqua-blue accent for headings */
-            text-shadow: 0 0 10px rgba(120, 209, 240, 0.5); /* Subtle glow for headings */
-            font-weight: 700;
-            letter-spacing: 0.03em; /* Slight letter spacing */
-            border-bottom: 2px solid rgba(70, 90, 140, 0.4);
-            padding-bottom: clamp(10px, 2vw, 15px);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #93c5fd;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 10px;
         }
 
-        h3 {
-            font-size: clamp(1.1rem, 3.5vw, 1.5rem);
-            margin-top: clamp(25px, 5vw, 35px);
-            margin-bottom: clamp(10px, 2vw, 15px);
-            color: #a7d9f7;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            border-bottom: 1px solid rgba(70, 90, 140, 0.2);
-            padding-bottom: clamp(5px, 1.5vw, 8px);
-        }
-
-        /* Input Styles - Modern & Functional */
+        /* Input Styles */
         .input-group {
-            margin-bottom: clamp(15px, 3vw, 25px);
-            width: 100%;
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-bottom: clamp(5px, 1.5vw, 10px);
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
-            color: #b3c5e6;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
             font-weight: 500;
-            letter-spacing: 0.01em;
         }
 
         input[type="number"], input[type="text"], select {
             width: 100%;
-            padding: clamp(10px, 3vw, 14px) clamp(12px, 3.5vw, 18px); /* Responsive padding */
-            border-radius: 12px;
-            border: 1px solid #4a628a;
-            background: #0f172a; /* Dark background for inputs */
-            color: #e6eaf0;
-            font-size: clamp(0.95rem, 3vw, 1.1rem);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4); /* Inset shadow for depth */
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background-color: #334155;
+            color: #e2e8f0;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         input[type="number"]:focus, input[type="text"]:focus, select:focus {
             border-color: #60a5fa;
             outline: none;
-            box-shadow: 
-                0 0 0 4px rgba(96, 165, 250, 0.3), /* Outer focus glow */
-                inset 0 2px 8px rgba(0, 0, 0, 0.6); /* Deeper inset shadow */
-            background-color: #121c2c;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.5);
         }
 
-        /* Output Display - Clean & Highlighted */
+        /* Output Display */
         .output-panel {
-            margin-top: clamp(20px, 4vw, 30px);
-            padding: clamp(18px, 4vw, 25px);
-            border-radius: 15px;
-            background: rgba(15, 23, 42, 0.7); /* Slightly darker background than card */
-            border: 1px solid rgba(70, 90, 140, 0.2);
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
         }
 
         .output-panel p {
             display: flex;
             justify-content: space-between;
-            margin-bottom: clamp(8px, 2vw, 12px);
-            font-size: clamp(0.95rem, 2.8vw, 1.05rem);
-            color: #c7d2e0;
-        }
-
-        .output-panel p:last-child {
-            margin-bottom: 0;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
         }
 
         .output-panel p strong {
-            color: #61e88e; /* Vibrant green for positive outcomes */
+            color: #a7f3d0;
             font-weight: 600;
-            text-align: right;
-            text-shadow: 0 0 5px rgba(97, 232, 142, 0.2);
         }
 
         .output-panel p.highlight strong {
-            color: #fce38a; /* Bright gold for key results */
-            font-size: clamp(1.1rem, 3.5vw, 1.3rem);
-            font-weight: 700;
-            text-shadow: 0 0 8px rgba(252, 227, 138, 0.4);
+            color: #fcd34d;
+            font-size: 1.1rem;
         }
 
-        /* Button Styles - Dynamic & Interactive */
+        /* Button Styles */
         .button-group {
             display: flex;
-            gap: clamp(10px, 2.5vw, 15px);
-            margin-top: clamp(20px, 4vw, 30px);
-            flex-wrap: wrap; /* Ensure buttons wrap on mobile */
-            justify-content: flex-start;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: clamp(10px, 3vw, 14px) clamp(15px, 4vw, 22px);
-            border-radius: 12px;
+            padding: 10px 15px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
             font-weight: 600;
-            font-size: clamp(0.9rem, 2.8vw, 1rem);
-            transition: all 0.25s ease;
-            flex-grow: 1;
-            min-width: clamp(100px, 25vw, 150px); /* Maintain reasonable button width */
-            position: relative;
-            overflow: hidden;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
         }
 
         .btn-primary {
-            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
             color: #ffffff;
-            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4), 0 0 10px rgba(59, 130, 246, 0.3) inset;
+            box-shadow: 0 2px 5px rgba(59, 130, 246, 0.4);
         }
 
         .btn-primary:hover {
-            background: linear-gradient(90deg, #60a5fa, #3b82f6);
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6), 0 0 15px rgba(59, 130, 246, 0.4) inset;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: linear-gradient(90deg, #475569, #334155);
-            color: #e6eaf0;
-            border: 1px solid #5a6d85;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 5px rgba(100, 116, 139, 0.1) inset;
+            background-color: #475569;
+            color: #e2e8f0;
+            border: 1px solid #64748b;
         }
 
         .btn-secondary:hover {
-            background: linear-gradient(90deg, #334155, #475569);
-            transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 8px rgba(100, 116, 139, 0.2) inset;
+            background-color: #64748b;
         }
 
-        /* Trade Journal Table - Highly Responsive & Stylish */
+        /* Trade Journal Table */
         .journal-container {
-            overflow-x: auto; /* Ensures horizontal scrolling for the table if needed */
-            margin-top: clamp(20px, 4vw, 30px);
-            border-radius: 15px;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.4);
-            background: rgba(15, 23, 42, 0.6); /* Slightly transparent for the table background */
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            overflow-x: auto;
         }
 
         .journal-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: clamp(0.75rem, 2.2vw, 0.9rem); /* Fluid font size for table */
-            min-width: 800px; /* Minimum width to prevent excessive scrunching */
+            margin-top: 15px;
+            font-size: 0.85rem;
         }
-
-        @media (max-width: 768px) {
-            .journal-table {
-                min-width: 600px; /* Adjust min-width for tablet */
-            }
-        }
-        @media (max-width: 480px) {
-            .journal-table {
-                min-width: 500px; /* Further adjust min-width for iPhone-like screens */
-            }
-        }
-
 
         .journal-table th, .journal-table td {
-            padding: clamp(10px, 2.5vw, 16px) clamp(12px, 3vw, 20px);
+            padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid rgba(70, 90, 140, 0.25);
-            white-space: nowrap; /* Keep content on one line to ensure table scroll */
+            border-bottom: 1px solid #334155;
         }
 
         .journal-table th {
-            background-color: #202e42;
+            background-color: #334155;
             color: #93c5fd;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.05em;
             font-weight: 700;
             position: sticky;
             top: 0;
-            z-index: 1;
-            background: linear-gradient(180deg, #202e42, #18253a); /* Header gradient */
-        }
-
-        .journal-table tbody tr {
-            transition: background-color 0.2s ease;
         }
 
         .journal-table tbody tr:hover {
-            background-color: rgba(35, 45, 70, 0.7); /* More transparent on hover */
+            background-color: #1e293b;
         }
 
         .summary-row td {
-            background: linear-gradient(90deg, #283a54, #1a273b);
+            background-color: #0f172a;
             font-weight: bold;
             color: #a7f3d0;
             border-top: 2px solid #60a5fa;
-            padding: clamp(15px, 3.5vw, 22px) clamp(18px, 4vw, 25px);
-            font-size: clamp(0.95rem, 2.8vw, 1.1rem);
-            text-shadow: 0 0 8px rgba(167, 243, 208, 0.3);
         }
 
-        /* Disclaimers - Elegant & Subdued */
+        /* Disclaimers */
         .disclaimer-section {
-            margin-top: clamp(40px, 8vw, 70px);
-            padding-top: clamp(25px, 5vw, 40px);
-            border-top: 1px solid rgba(70, 90, 140, 0.3);
-            font-size: clamp(0.7rem, 2vw, 0.8rem);
-            color: #8b9eb8;
-            text-align: center;
-            max-width: 900px;
-            width: 100%;
-            line-height: 1.6;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            font-size: 0.75rem;
+            color: #94a3b8;
         }
 
         .disclaimer-section p {
-            margin-bottom: clamp(15px, 3vw, 25px);
+            margin-bottom: 15px;
+            line-height: 1.4;
         }
 
         .disclaimer-section hr {
             border: 0;
             height: 1px;
-            background-color: rgba(70, 90, 140, 0.2);
-            margin: clamp(15px, 3vw, 25px) auto;
-            width: 70%;
-        }
-
-        /* Mobile Specific Adjustments for buttons and layout */
-        @media (max-width: 480px) {
-            .button-group {
-                flex-direction: column; /* Stack buttons vertically on very small screens */
-            }
-            .btn {
-                width: 100%;
-                min-width: unset;
-            }
+            background-color: #334155;
+            margin: 15px 0;
         }
 
     </style>
@@ -336,7 +240,8 @@
 <body>
 
     <div class="container">
-        <!-- Instrument Selector and Specs --><section class="card instrument-section">
+        <!-- Instrument Selector and Specs -->
+        <section class="card instrument-section">
             <h2>Instrument & Margin</h2>
             <div class="input-group">
                 <label for="instrument-select">Select Instrument</label>
@@ -352,7 +257,7 @@
                 <p>Leverage: <strong id="output-leverage">0x</strong></p>
             </div>
 
-            <h3>Custom Instrument</h3>
+            <h3 style="margin-top: 20px; color: #cbd5e1; font-size: 1.2rem; border-bottom: 1px solid #334155; padding-bottom: 5px;">Custom Instrument</h3>
             <div id="custom-instrument-form">
                 <div class="input-group"><input type="text" id="custom-name" placeholder="Name (e.g., CUS)"></div>
                 <div class="input-group"><input type="number" id="custom-tick-size" placeholder="Tick Size (e.g., 0.25)" step="any"></div>
@@ -366,7 +271,8 @@
 
         </section>
 
-        <!-- Position Size & Risk Calculator --><section class="card risk-calculator">
+        <!-- Position Size & Risk Calculator -->
+        <section class="card risk-calculator">
             <h2>Position Size & Risk</h2>
             <div class="input-group">
                 <label for="account-balance">Account Balance ($)</label>
@@ -389,7 +295,8 @@
             </div>
         </section>
 
-        <!-- P&L and Simulation Calculator --><section class="card pnl-calculator">
+        <!-- P&L and Simulation Calculator -->
+        <section class="card pnl-calculator">
             <h2>P&L & Simulation</h2>
             <div class="input-group">
                 <label for="entry-price">Entry Price</label>
@@ -408,7 +315,7 @@
                 <input type="number" id="commission" value="4.00" min="0" step="0.01" oninput="updateCalculators()">
             </div>
 
-            <h3>Trade Outcomes</h3>
+            <h3 style="margin-top: 10px; color: #cbd5e1; font-size: 1.1rem;">Trade Outcomes</h3>
             <div class="input-group">
                 <label for="target-price">Target Price (Optional)</label>
                 <input type="number" id="target-price" value="4520.00" step="any" oninput="updateCalculators()">
@@ -424,7 +331,7 @@
                 <p>Net P&L ($): <strong id="output-net-pnl">$0.00</strong></p>
                 <p>P&L (Points): <strong id="output-pnl-points">0.00</strong></p>
                 <p>P&L (Ticks): <strong id="output-pnl-ticks">0</strong></p>
-                <hr style="border: 0; height: 1px; background-color: rgba(70, 90, 140, 0.4); margin: clamp(15px, 3vw, 20px) 0;">
+                <hr style="border: 0; height: 1px; background-color: #475569; margin: 10px 0;">
                 <p class="highlight">Risk-to-Reward (R:R): <strong id="output-rr">0.00:1</strong></p>
             </div>
             <div class="button-group">
@@ -432,7 +339,8 @@
             </div>
         </section>
 
-        <!-- Trade Journal --><section class="card journal-section">
+        <!-- Trade Journal -->
+        <section class="card journal-section">
             <h2>Trade Journal (Session Data)</h2>
             <div class="button-group">
                 <button class="btn btn-secondary" onclick="exportJournal('csv')">Export CSV</button>
@@ -460,7 +368,8 @@
                         </tr>
                     </thead>
                     <tbody id="journal-body">
-                        <!-- Trades will be inserted here --></tbody>
+                        <!-- Trades will be inserted here -->
+                    </tbody>
                     <tfoot>
                         <tr class="summary-row">
                             <td colspan="7">TOTALS/AVERAGE</td>
@@ -473,7 +382,8 @@
             </div>
         </section>
 
-        <!-- Disclaimers --><section class="disclaimer-section">
+        <!-- Disclaimers -->
+        <section class="disclaimer-section">
             <p>HYPOTHETICAL OR SIMULATED PERFORMANCE RESULTS HAVE CERTAIN INHERENT LIMITATIONS. UNLIKE AN ACTUAL PERFORMANCE RECORD, SIMULATED RESULTS DO NOT REPRESENT ACTUAL TRADING. ALSO, SINCE THE TRADES HAVE NOT BEEN EXECUTED, THE RESULTS MAY HAVE UNDER-OR-OVER COMPENSATED FOR THE IMPACT, IF ANY, OF CERTAIN MARKET FACTORS, SUCH AS LACK OF LIQUIDITY. SIMULATED TRADING PROGRAMS IN GENERAL ARE ALSO SUBJECT TO THE FACT THAT THEY ARE DESIGNED WITH THE BENEFIT OF HINDSIGHT. NO REPRESENTATION IS BEING MADE THAT ANY ACCOUNT WILL OR IS LIKELY TO ACHIEVE PROFIT OR LOSSES SIMILAR TO THOSE SHOWN.</p>
             <hr>
             <p>All calculations and trade data exist only in your browser’s memory. Nothing is saved or transmitted. Refreshing or closing the page will permanently clear all data. This website does not provide financial, investment, or trading advice. Use of any information or tools on this site is entirely at your own risk.</p>
@@ -699,7 +609,7 @@
             }
 
             const { netPnL, rr } = calculatePnLAndRR(inst);
-            const timestamp = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            const timestamp = new Date().toLocaleTimeString();
 
             const trade = {
                 timestamp,
@@ -725,7 +635,7 @@
             let totalRR = 0;
 
             if (tradeJournal.length === 0) {
-                body.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #64748b; padding: 20px;">No trades recorded in this session.</td></tr>';
+                body.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #64748b;">No trades recorded in this session.</td></tr>';
                 document.getElementById('summary-total-pnl').textContent = 'Total P&L: $0.00';
                 document.getElementById('summary-avg-rr').textContent = 'Avg R:R: 0.00';
                 return;
@@ -810,33 +720,33 @@
                     content = [
                         header.join(','),
                         ...data.map(row => row.join(','))
-                    ].join('\n') + '\n\nSummary:\n' + summary.join(', ');
+                    ].join('\n') + '\n\n' + summary.join(', ');
                     mimeType = 'text/csv';
-                    filename = 'quantum_journal.csv';
+                    filename = 'futures_journal.csv';
                     break;
                 case 'txt':
-                    content = 'Quantum Futures Terminal - Trade Journal\n\n' +
+                    content = 'Futures Trading Journal\n\n' +
                               header.join('\t') + '\n' +
                               data.map(row => row.join('\t')).join('\n') +
                               '\n\nSummary:\n' + summary.join(' | ');
                     mimeType = 'text/plain';
-                    filename = 'quantum_journal.txt';
+                    filename = 'futures_journal.txt';
                     break;
                 case 'json':
                     content = JSON.stringify({ trades: tradeJournal, summary: { totalPnL: tradeJournal.reduce((sum, t) => sum + t.netPnL, 0), averageRR: totalRR / tradeJournal.length } }, null, 2);
                     mimeType = 'application/json';
-                    filename = 'quantum_journal.json';
+                    filename = 'futures_journal.json';
                     break;
                 case 'pdf':
                     // Simple PDF generation using a Data URI, simulating a basic document.
                     // True PDF generation is complex and requires libraries, which are forbidden.
                     content = 'data:text/html;charset=utf-8,' + encodeURIComponent(`
-                        <html><head><title>Quantum Futures Journal PDF</title><style>
-                        body{font-family:sans-serif;margin:40px;color:#333;} h1{color:#111;} table{width:100%;border-collapse:collapse;margin-top:20px;}
-                        th,td{border:1px solid #ccc;padding:10px;text-align:left;} th{background-color:#eee;font-weight:bold;}
-                        .summary{margin-top:30px;font-weight:bold;color:#111;}
+                        <html><head><title>Futures Journal PDF</title><style>
+                        body{font-family:sans-serif;margin:40px;} table{width:100%;border-collapse:collapse;}
+                        th,td{border:1px solid #000;padding:8px;text-align:left;} th{background-color:#eee;}
+                        .summary{margin-top:20px;font-weight:bold;}
                         </style></head><body>
-                        <h1>Quantum Futures Terminal - Trade Journal</h1>
+                        <h1>Futures Trading Journal</h1>
                         <table>
                             <thead><tr>${header.map(h => `<th>${h}</th>`).join('')}</tr></thead>
                             <tbody>${data.map(row => `<tr>${row.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
@@ -845,11 +755,11 @@
                             <p>${document.getElementById('summary-total-pnl').textContent}</p>
                             <p>${document.getElementById('summary-avg-rr').textContent}</p>
                         </div>
-                        <p style="margin-top: 50px; font-size: 10px; color:#666;">Disclaimer: This is a simulated performance record only.</p>
+                        <p style="margin-top: 50px; font-size: 10px;">Disclaimer: This is a simulated performance record only.</p>
                         </body></html>
                     `);
                     mimeType = 'application/pdf'; // This will prompt the browser to print/save as PDF
-                    filename = 'quantum_journal.pdf';
+                    filename = 'futures_journal.pdf';
                     
                     const printWindow = window.open('about:blank', '_blank');
                     printWindow.document.write(decodeURIComponent(content).replace('application/pdf', 'text/html'));
