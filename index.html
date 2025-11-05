@@ -14,10 +14,10 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); /* Dark gradient background */
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: #e2e8f0;
             line-height: 1.6;
-            padding: 20px;
+            padding: 10px;
             min-height: 100vh;
         }
 
@@ -26,13 +26,17 @@
             max-width: 1400px;
             margin: 0 auto;
             display: grid;
-            gap: 20px;
+            gap: 15px;
             grid-template-columns: 1fr;
         }
 
         /* Desktop Layout (Multi-panel grid) */
         @media (min-width: 1024px) {
+            body {
+                padding: 20px;
+            }
             .container {
+                gap: 20px;
                 grid-template-columns: 1fr 1fr 1fr;
                 grid-template-rows: auto auto 1fr;
             }
@@ -61,11 +65,17 @@
         /* Cards/Panels */
         .card {
             background-color: #1f2937;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             border: 1px solid #334155;
             transition: transform 0.2s;
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                padding: 20px;
+            }
         }
 
         .card:hover {
@@ -74,24 +84,44 @@
         }
 
         h2 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
             color: #93c5fd;
             border-bottom: 2px solid #334155;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
+        }
+
+        @media (min-width: 768px) {
+            h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+            }
         }
 
         /* Input Styles */
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .input-group {
+                margin-bottom: 15px;
+            }
         }
 
         label {
             display: block;
             margin-bottom: 5px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #cbd5e1;
             font-weight: 500;
+        }
+
+        @media (min-width: 768px) {
+            label {
+                font-size: 0.9rem;
+            }
         }
 
         input[type="number"], input[type="text"], select {
@@ -101,8 +131,14 @@
             border: 1px solid #475569;
             background-color: #334155;
             color: #e2e8f0;
-            font-size: 1rem;
+            font-size: 16px; /* Prevent zoom on iOS */
             transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        @media (min-width: 768px) {
+            input[type="number"], input[type="text"], select {
+                font-size: 1rem;
+            }
         }
 
         input[type="number"]:focus, input[type="text"]:focus, select:focus {
@@ -113,18 +149,34 @@
 
         /* Output Display */
         .output-panel {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 15px;
+            padding: 12px;
             border-radius: 8px;
             background-color: #0f172a;
             border: 1px solid #1e293b;
         }
 
+        @media (min-width: 768px) {
+            .output-panel {
+                margin-top: 20px;
+                padding: 15px;
+            }
+        }
+
         .output-panel p {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        @media (min-width: 768px) {
+            .output-panel p {
+                margin-bottom: 8px;
+                font-size: 0.95rem;
+            }
         }
 
         .output-panel p strong {
@@ -134,24 +186,48 @@
 
         .output-panel p.highlight strong {
             color: #fcd34d;
-            font-size: 1.1rem;
+            font-size: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .output-panel p.highlight strong {
+                font-size: 1.1rem;
+            }
         }
 
         /* Button Styles */
         .button-group {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 12px;
             flex-wrap: wrap;
         }
 
+        @media (min-width: 768px) {
+            .button-group {
+                gap: 10px;
+                margin-top: 15px;
+            }
+        }
+
         .btn {
-            padding: 10px 15px;
+            padding: 10px 12px;
             border-radius: 8px;
             border: none;
             cursor: pointer;
             font-weight: 600;
+            font-size: 0.85rem;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        @media (min-width: 768px) {
+            .btn {
+                padding: 10px 15px;
+                font-size: 1rem;
+                flex: initial;
+            }
         }
 
         .btn-primary {
@@ -178,19 +254,43 @@
         /* Trade Journal Table */
         .journal-container {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -15px;
+            padding: 0 15px;
+        }
+
+        @media (min-width: 768px) {
+            .journal-container {
+                margin: 0;
+                padding: 0;
+            }
         }
 
         .journal-table {
             width: 100%;
+            min-width: 800px;
             border-collapse: collapse;
             margin-top: 15px;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
+        }
+
+        @media (min-width: 768px) {
+            .journal-table {
+                font-size: 0.85rem;
+            }
         }
 
         .journal-table th, .journal-table td {
-            padding: 12px 15px;
+            padding: 8px 10px;
             text-align: left;
             border-bottom: 1px solid #334155;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 768px) {
+            .journal-table th, .journal-table td {
+                padding: 12px 15px;
+            }
         }
 
         .journal-table th {
@@ -216,23 +316,58 @@
 
         /* Disclaimers */
         .disclaimer-section {
-            margin-top: 40px;
-            padding-top: 20px;
+            margin-top: 30px;
+            padding-top: 15px;
             border-top: 1px solid #334155;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #94a3b8;
         }
 
+        @media (min-width: 768px) {
+            .disclaimer-section {
+                margin-top: 40px;
+                padding-top: 20px;
+                font-size: 0.75rem;
+            }
+        }
+
         .disclaimer-section p {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             line-height: 1.4;
+        }
+
+        @media (min-width: 768px) {
+            .disclaimer-section p {
+                margin-bottom: 15px;
+            }
         }
 
         .disclaimer-section hr {
             border: 0;
             height: 1px;
             background-color: #334155;
-            margin: 15px 0;
+            margin: 12px 0;
+        }
+
+        @media (min-width: 768px) {
+            .disclaimer-section hr {
+                margin: 15px 0;
+            }
+        }
+
+        h3 {
+            margin-top: 15px;
+            color: #cbd5e1;
+            font-size: 1rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 5px;
+        }
+
+        @media (min-width: 768px) {
+            h3 {
+                margin-top: 20px;
+                font-size: 1.2rem;
+            }
         }
 
     </style>
@@ -257,7 +392,7 @@
                 <p>Leverage: <strong id="output-leverage">0x</strong></p>
             </div>
 
-            <h3 style="margin-top: 20px; color: #cbd5e1; font-size: 1.2rem; border-bottom: 1px solid #334155; padding-bottom: 5px;">Custom Instrument</h3>
+            <h3>Custom Instrument</h3>
             <div id="custom-instrument-form">
                 <div class="input-group"><input type="text" id="custom-name" placeholder="Name (e.g., CUS)"></div>
                 <div class="input-group"><input type="number" id="custom-tick-size" placeholder="Tick Size (e.g., 0.25)" step="any"></div>
@@ -315,7 +450,7 @@
                 <input type="number" id="commission" value="4.00" min="0" step="0.01" oninput="updateCalculators()">
             </div>
 
-            <h3 style="margin-top: 10px; color: #cbd5e1; font-size: 1.1rem;">Trade Outcomes</h3>
+            <h3>Trade Outcomes</h3>
             <div class="input-group">
                 <label for="target-price">Target Price (Optional)</label>
                 <input type="number" id="target-price" value="4520.00" step="any" oninput="updateCalculators()">
@@ -346,7 +481,7 @@
                 <button class="btn btn-secondary" onclick="exportJournal('csv')">Export CSV</button>
                 <button class="btn btn-secondary" onclick="exportJournal('txt')">Export TXT</button>
                 <button class="btn btn-secondary" onclick="exportJournal('json')">Export JSON</button>
-                <button class="btn btn-secondary" onclick="exportJournal('pdf')">Export PDF (Simple)</button>
+                <button class="btn btn-secondary" onclick="exportJournal('pdf')">Export PDF</button>
                 <button class="btn btn-secondary" onclick="clearJournal()">Clear Journal</button>
                 <button class="btn btn-secondary" onclick="resetAll()">Reset All</button>
             </div>
@@ -386,7 +521,7 @@
         <section class="disclaimer-section">
             <p>HYPOTHETICAL OR SIMULATED PERFORMANCE RESULTS HAVE CERTAIN INHERENT LIMITATIONS. UNLIKE AN ACTUAL PERFORMANCE RECORD, SIMULATED RESULTS DO NOT REPRESENT ACTUAL TRADING. ALSO, SINCE THE TRADES HAVE NOT BEEN EXECUTED, THE RESULTS MAY HAVE UNDER-OR-OVER COMPENSATED FOR THE IMPACT, IF ANY, OF CERTAIN MARKET FACTORS, SUCH AS LACK OF LIQUIDITY. SIMULATED TRADING PROGRAMS IN GENERAL ARE ALSO SUBJECT TO THE FACT THAT THEY ARE DESIGNED WITH THE BENEFIT OF HINDSIGHT. NO REPRESENTATION IS BEING MADE THAT ANY ACCOUNT WILL OR IS LIKELY TO ACHIEVE PROFIT OR LOSSES SIMILAR TO THOSE SHOWN.</p>
             <hr>
-            <p>All calculations and trade data exist only in your browser’s memory. Nothing is saved or transmitted. Refreshing or closing the page will permanently clear all data. This website does not provide financial, investment, or trading advice. Use of any information or tools on this site is entirely at your own risk.</p>
+            <p>All calculations and trade data exist only in your browser's memory. Nothing is saved or transmitted. Refreshing or closing the page will permanently clear all data. This website does not provide financial, investment, or trading advice. Use of any information or tools on this site is entirely at your own risk.</p>
         </section>
 
     </div>
@@ -428,7 +563,7 @@
             });
 
             select.onchange = updateCalculators;
-            select.value = 'ES'; // Set default selection
+            select.value = 'ES';
             updateCalculators();
         }
 
@@ -478,7 +613,6 @@
             document.getElementById('instrument-select').value = name;
             updateCalculators();
 
-            // Clear custom form
             document.getElementById('custom-name').value = '';
             document.getElementById('custom-tick-size').value = '';
             document.getElementById('custom-tick-value').value = '';
@@ -543,11 +677,10 @@
             let stopLoss = 0;
 
             if (inst && !isNaN(targetPrice) && !isNaN(stopPrice) && !isNaN(entryPrice) && contracts > 0) {
-                // Determine if Long or Short
-                if (targetPrice > entryPrice && stopPrice < entryPrice) { // Assumed Long Trade
+                if (targetPrice > entryPrice && stopPrice < entryPrice) {
                     targetGain = (targetPrice - entryPrice) * inst.contractMultiplier;
                     stopLoss = (entryPrice - stopPrice) * inst.contractMultiplier;
-                } else if (targetPrice < entryPrice && stopPrice > entryPrice) { // Assumed Short Trade
+                } else if (targetPrice < entryPrice && stopPrice > entryPrice) {
                     targetGain = (entryPrice - targetPrice) * inst.contractMultiplier;
                     stopLoss = (stopPrice - entryPrice) * inst.contractMultiplier;
                 } else {
@@ -573,7 +706,6 @@
             let leverage = 0;
 
             if (inst && !isNaN(entryPrice) && contracts > 0 && balance > 0) {
-                // Position Value (approximate) = Price * Point Value (Multiplier) * Contracts
                 const positionValue = entryPrice * inst.contractMultiplier * contracts;
                 leverage = positionValue / balance;
             }
@@ -589,8 +721,6 @@
             calculatePnLAndRR(inst);
             updateLeverage(inst);
         }
-
-        // --- Trade Journal Functions ---
 
         function addTradeToJournal() {
             const inst = getInstrument();
@@ -651,15 +781,15 @@
                 row.insertCell().textContent = trade.stop;
                 row.insertCell().textContent = trade.target;
                 row.insertCell().textContent = trade.rr;
-                row.insertCell().textContent = `$${trade.netPnL.toFixed(2)}`;
-                row.insertCell().textContent = `$${trade.commissions}`;
+                row.insertCell().textContent = `${trade.netPnL.toFixed(2)}`;
+                row.insertCell().textContent = `${trade.commissions}`;
 
                 totalPnL += trade.netPnL;
                 totalRR += parseFloat(trade.rr);
             });
 
             const avgRR = totalRR / tradeJournal.length;
-            document.getElementById('summary-total-pnl').textContent = `Total P&L: $${totalPnL.toFixed(2)}`;
+            document.getElementById('summary-total-pnl').textContent = `Total P&L: ${totalPnL.toFixed(2)}`;
             document.getElementById('summary-avg-rr').textContent = `Avg R:R: ${avgRR.toFixed(2)}`;
         }
 
@@ -672,11 +802,9 @@
 
         function resetAll() {
              if (confirm('Are you sure you want to reset all inputs and clear the journal?')) {
-                // Clear Journal
                 tradeJournal = [];
                 renderJournal();
 
-                // Reset Inputs (simple brute force for a one-file app)
                 document.getElementById('account-balance').value = '25000';
                 document.getElementById('risk-percent').value = '1.0';
                 document.getElementById('stop-ticks').value = '16';
@@ -687,15 +815,12 @@
                 document.getElementById('target-price').value = '4520.00';
                 document.getElementById('stop-price').value = '4495.00';
 
-                // Reset custom instruments
                 currentInstruments = {...BUILT_IN_INSTRUMENTS};
                 initInstrumentSelector();
 
                 updateCalculators();
             }
         }
-
-        // --- Export Functions ---
 
         function exportJournal(format) {
             if (tradeJournal.length === 0) {
@@ -738,8 +863,6 @@
                     filename = 'futures_journal.json';
                     break;
                 case 'pdf':
-                    // Simple PDF generation using a Data URI, simulating a basic document.
-                    // True PDF generation is complex and requires libraries, which are forbidden.
                     content = 'data:text/html;charset=utf-8,' + encodeURIComponent(`
                         <html><head><title>Futures Journal PDF</title><style>
                         body{font-family:sans-serif;margin:40px;} table{width:100%;border-collapse:collapse;}
@@ -758,14 +881,14 @@
                         <p style="margin-top: 50px; font-size: 10px;">Disclaimer: This is a simulated performance record only.</p>
                         </body></html>
                     `);
-                    mimeType = 'application/pdf'; // This will prompt the browser to print/save as PDF
+                    mimeType = 'application/pdf';
                     filename = 'futures_journal.pdf';
                     
                     const printWindow = window.open('about:blank', '_blank');
                     printWindow.document.write(decodeURIComponent(content).replace('application/pdf', 'text/html'));
                     printWindow.document.close();
                     printWindow.print();
-                    return; // Return early for PDF handled by print
+                    return;
 
             }
 
@@ -780,14 +903,11 @@
             URL.revokeObjectURL(url);
         }
 
-        // --- Initialization ---
-
         window.onload = function() {
             initInstrumentSelector();
             updateCalculators();
             renderJournal();
 
-            // Setup input listeners for auto-update (in addition to inline)
             document.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
                 input.addEventListener('input', updateCalculators);
             });
